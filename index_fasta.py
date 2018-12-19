@@ -75,9 +75,13 @@ def create_index(input_file, output_file, key_length, n_seqs=None):
         position_start = 0
         seq_len = 0
         multiline = None
+        database_size = 0
         while line:
             if line.startswith('>'):
-                if header: tb.insert(header, position_start, (seq_len << 1) + multiline)
+                if header: 
+                    tb.insert(header, position_start, (seq_len << 1) + multiline)
+                    #print(f'{header}\t{position_start}\t{(seq_len << 1) + multiline}')
+                    database_size += seq_len
                 header = line.split()[0].lstrip('>')
                 position_start = fasta.tell()
                 multiline = None
@@ -88,8 +92,10 @@ def create_index(input_file, output_file, key_length, n_seqs=None):
             line = fasta.readline()
         if header:
             tb.insert(header, position_start, (seq_len << 1) + multiline)
+            #print(f'{header}\t{position_start}\t{(seq_len << 1) + multiline}')
+            database_size += seq_len
     print("Index creation finished!")
-
+    print("The database size is: ", database_size)
 
 def main():
     args = parse_args()
